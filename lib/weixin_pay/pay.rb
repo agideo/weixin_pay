@@ -1,35 +1,40 @@
+require 'rest_client'
+require 'active_support/core_ext/hash/conversions'
+
 module WeixinPay
   module Pay
-    API_BASE_URL = "https://api.mch.weixin.qq.com/pay/micropay"
+    API_BASE_URL = "https://api.mch.weixin.qq.com/pay"
     API_MICRPAY_URL = "#{API_BASE_URL}/micropay"
     INVOKE_MICRPAY_REQUIRED_FIELDS = %w(appid mch_id nonce_str sign body out_trade_no total_fee spbill_create_ip auth_code)
 
     def self.micrpay(params={})
       params = {
-          appid: WeixinPay.app_id,
+          appid: WeixinPay.appid,
           mch_id: WeixinPay.mch_id,
           nonce_str: SecureRandom.uuid.tr('-', ''),
-          time_expire: Time.now.to_i
+          time_expire: Time.now.since(1.minutes).strftime("%Y%m%d%H%M%S")
         }.merge(params)
 
       # TODO check_required_params(params, INVOKE_MICRPAY_REQUIRED_FIELDS)
 
       remote_params = params.merge(sign: WeixinPay::Sign.generate(params))
       xml = make_xml(remote_params)
-      post_pay(xml)
+      post_pay(API_MICRPAY_URL, xml)
 
 
     end
 
       private
 
-      def post_pay(url, xml)
+      def self.post_pay(url, xml)
+        Rails.logger.info url
+        Rails.logger.info xml
         result = RestClient::Request.execute({
           method: :post,
           url: url,
           payload: xml,
           headers: { content_type: 'application/xml' }
-        }.merge(WeixPay.extra_rest_client_options))
+        }.merge(WeixinPay.extra_rest_client_options))
 
         if result
           WeixinPay::Result.new Hash.from_xml(result)
@@ -53,7 +58,7 @@ module WeixinPay
 #    <total_fee>1</total_fee>
 #    <sign>C29DB7DB1FD4136B84AE35604756362C</sign>
 # </xml>
-      def make_xml(params)
+      def self.make_xml(params)
         xml_body = params.map do |k, v|
           "<#{k}>#{v}</#{k}>"
         end.join("\n")
@@ -67,7 +72,7 @@ xml_str
 
       def self.check_required_params(params, names)
         names.each do |name|
-          warn("WeixPay Warn: missing required option: #{name}") unless params.has_key?(name)
+          warn("WeixinPay Warn: missing required option: #{name}") unless params.has_key?(name)
         end
       end
   end
