@@ -1,5 +1,13 @@
 require "weixin_pay/version"
+require "weixin_pay/sign"
+require "weixin_pay/pay"
 
 module WeixinPay
-  # Your code goes here...
+  class << self
+    attr_accessor :appid, :mch_id, :key
+
+    def extra_rest_client_options
+      {}
+    end
+  end
 end
