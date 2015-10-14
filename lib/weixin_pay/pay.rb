@@ -14,7 +14,7 @@ module WeixinPay
 
       # TODO check_required_params(params, INVOKE_MICRPAY_REQUIRED_FIELDS)
 
-      remote_params = params.merge(sign: WxPay::Sign.generate(params))
+      remote_params = params.merge(sign: WeixinPay::Sign.generate(params))
       xml = make_xml(remote_params)
       post_pay(xml)
 
