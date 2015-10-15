@@ -5,6 +5,7 @@ module WeixinPay
   module Pay
     API_BASE_URL = "https://api.mch.weixin.qq.com/pay"
     API_MICRPAY_URL = "#{API_BASE_URL}/micropay"
+    API_ORDERQUERY_URL = "#{API_BASE_URL}/orderquery"
     INVOKE_MICRPAY_REQUIRED_FIELDS = %w(appid mch_id nonce_str sign body out_trade_no total_fee spbill_create_ip auth_code)
 
     def self.micrpay(params={})
@@ -20,8 +21,20 @@ module WeixinPay
       remote_params = params.merge(sign: WeixinPay::Sign.generate(params))
       xml = make_xml(remote_params)
       post_pay(API_MICRPAY_URL, xml)
+    end
 
+    def self.orderquery(params={})
+      params = {
+          appid: WeixinPay.appid,
+          mch_id: WeixinPay.mch_id,
+          nonce_str: SecureRandom.uuid.tr('-', '')
+        }.merge(params)
 
+      # TODO check_required_params(params, INVOKE_MICRPAY_REQUIRED_FIELDS)
+
+      remote_params = params.merge(sign: WeixinPay::Sign.generate(params))
+      xml = make_xml(remote_params)
+      post_pay(API_ORDERQUERY_URL, xml)
     end
 
       private
@@ -43,6 +56,7 @@ module WeixinPay
         end
       end
 
+# 提交刷卡支付
 # <xml>
 #    <appid>wx2421b1c4370ec43b</appid>
 #    <attach>订单额外描述</attach>
@@ -57,6 +71,15 @@ module WeixinPay
 #    <time_expire></time_expire>
 #    <total_fee>1</total_fee>
 #    <sign>C29DB7DB1FD4136B84AE35604756362C</sign>
+# </xml>
+# 查询订单
+# <xml>
+#    <appid>wx2421b1c4370ec43b</appid>
+#    <mch_id>10000100</mch_id>
+#    <nonce_str>ec2316275641faa3aacf3cc599e8730f</nonce_str>
+#    <transaction_id>1008450740201411110005820873</transaction_id>
+#    <out_trade_no>2008450740201411110005820874</out_trade_no>
+#    <sign>FDD167FAA73459FD921B144BAF4F4CA2</sign>
 # </xml>
       def self.make_xml(params)
         xml_body = params.map do |k, v|
