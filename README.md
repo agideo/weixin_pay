@@ -136,7 +136,7 @@ Details link to Weixin API doc [提交刷卡支付API](https://pay.weixin.qq.com
 
 ## TODO
 
-Write test for Weixinpay gem
+Write test for WeixinPay gem
 
 ## Contributing
 
