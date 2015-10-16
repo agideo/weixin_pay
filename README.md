@@ -38,7 +38,7 @@ Note: You should create your APIKEY (Link to [微信商户平台](https://pay.we
 
 **TODO check required fields**
 
-#### micropay
+#### micropay (提交刷卡支付)
 
 WeixinPay supports REST.
 
@@ -97,7 +97,7 @@ Return true if both `return_code` and `result_code` equal `SUCCESS`
 result.success? # => true
 ```
 
-#### orderquery
+#### orderquery (查询订单)
 
 WeixinPay supports REST.
 
