@@ -10,7 +10,7 @@ Please read official document first: <https://mp.weixin.qq.com/paymch/readtempla
 Add this line to your Gemfile:
 
 ```ruby
-gem 'weixin_pay', :git => 'https://github.com/agideo/weixin_pay'
+gem 'agideo_weixin_pay'
 ```
 
 And then execute:
