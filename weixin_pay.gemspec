@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'weixin_pay/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "weixin_pay"
+  spec.name          = "agideo_weixin_pay"
   spec.version       = WeixinPay::VERSION
   spec.authors       = ["Jim"]
   spec.email         = ["jim.jin2006@gmail.com"]
